@@ -12,9 +12,9 @@ contract MyLandContract
         uint cost;
         uint landID;
     }
+    
     address public owner;   // government who creates the contract
-
-    uint public totalLandsCounter; //total no of lands via this contract at any time
+    uint public totalLandsCounter; // total no of lands via this contract at any time
     
     //define who is owner
     constructor() public
@@ -62,7 +62,7 @@ contract MyLandContract
     function transferLand(address _landBuyer, uint _landID) public returns (bool)
     {
         //find out the particular land ID in owner's collection
-        for(uint i=0; i < (__ownedLands[msg.sender].length);i++)    
+        for(uint i = 0; i < (__ownedLands[msg.sender].length);i++)    
         {
             //if given land ID is indeed in owner's collection
             if (__ownedLands[msg.sender][i].landID == _landID)
@@ -70,7 +70,7 @@ contract MyLandContract
                 //copy land in new owner's collection
                 Land memory myLand = Land(
                     {
-                        ownerAddress:_landBuyer,
+                        ownerAddress: _landBuyer,
                         location: __ownedLands[msg.sender][i].location,
                         cost: __ownedLands[msg.sender][i].cost,
                         landID: _landID
@@ -95,7 +95,7 @@ contract MyLandContract
     
     //3. THIRD OPERATION
     //get land details of an account
-    function getLand(address _landHolder, uint _index) public view returns (string memory, uint, address,uint)
+    function getLand(address _landHolder, uint _index) public view returns (string memory, uint, address, uint)
     {
         return (__ownedLands[_landHolder][_index].location, 
                 __ownedLands[_landHolder][_index].cost,
