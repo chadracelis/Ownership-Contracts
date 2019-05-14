@@ -3,7 +3,7 @@ pragma solidity >=0.4.0 <0.6.0;
 // This contract allows the contract owner to put transferable land titles on the blockchain, giving verification to rightful owners 
 // and transparency to the public
 
-contract MyLandContract
+contract MyLandContract 
 {
     struct Land 
     {
