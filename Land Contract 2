@@ -1,10 +1,9 @@
 pragma solidity >=0.4.0 <0.6.0;
 
 
-contract MyLandContract 
-{
-    struct Land 
-    {
+contract MyLandContract {
+
+    struct Land {
         address ownerAddress;
         string location;
         uint cost;
@@ -14,57 +13,42 @@ contract MyLandContract
     address public owner;  
     uint public totalLands; 
    
-    constructor() public
-    {
+    constructor() public {
         owner = msg.sender;
         totalLands = 0;
     }
     
-    
     event Add(address owner, uint landID);
     event Transfer(address indexed from, address indexed to, uint landID);
 
-    modifier isOwner
-    {
+    modifier isOwner {
         require(msg.sender == owner);
         _;
-    }
-    
+    } 
     
     mapping (address => Land[]) public ownedLands; 
     
-
-
-    function addLand(string memory location, uint cost) public isOwner
-    {
+    function addLand(string memory location, uint cost) public isOwner {
         totalLands = totalLands + 1;
-        Land memory myLand = Land(
-            {
-                ownerAddress: msg.sender,
-                location: location,
-                cost: cost,
-                landID: totalLands
-            });
+        Land memory myLand = Land({
+            ownerAddress: msg.sender,
+            location: location,
+            cost: cost,
+            landID: totalLands
+        });
         ownedLands[msg.sender].push(myLand);
         emit Add(msg.sender, totalLands);
-
     }
     
-    
- 
-    function transferLand(address landBuyer, uint landID) public returns (bool)
-    {
-        for(uint i = 0; i < (ownedLands[msg.sender].length); i++)    
-        {
-            if (ownedLands[msg.sender][i].landID == landID)
-            {
-                Land memory myLand = Land(
-                    {
-                        ownerAddress: landBuyer,
-                        location: ownedLands[msg.sender][i].location,
-                        cost: ownedLands[msg.sender][i].cost,
-                        landID: landID
-                    });
+    function transferLand(address landBuyer, uint landID) public returns (bool) {
+        for(uint i = 0; i < (ownedLands[msg.sender].length); i++) {
+            if(ownedLands[msg.sender][i].landID == landID) {
+                Land memory myLand = Land({
+                    ownerAddress: landBuyer,
+                    location: ownedLands[msg.sender][i].location,
+                    cost: ownedLands[msg.sender][i].cost,
+                    landID: landID
+                });
                 ownedLands[landBuyer].push(myLand);   
                 delete ownedLands[msg.sender][i];
                 emit Transfer(msg.sender, landBuyer, landID);                
@@ -74,22 +58,15 @@ contract MyLandContract
         return false;
     }
     
-    
-    function getLand(address landHolder, uint index) public view returns(address, string memory, uint, uint)
-    {
-        return (
-                ownedLands[landHolder][index].ownerAddress,
-                ownedLands[landHolder][index].location, 
-                ownedLands[landHolder][index].cost,
-                ownedLands[landHolder][index].landID
-                );
+    function getLand(address landHolder, uint index) public view returns(address, string memory, uint, uint) {
+        return(ownedLands[landHolder][index].ownerAddress,
+               ownedLands[landHolder][index].location, 
+               ownedLands[landHolder][index].cost,
+               ownedLands[landHolder][index].landID);
     }
     
-   
-    function getNoOfLands(address landHolder) public view returns (uint)
-    {
+    function getNoOfLands(address landHolder) public view returns(uint) {
         return ownedLands[landHolder].length;
     }
-
-
+    
 }
