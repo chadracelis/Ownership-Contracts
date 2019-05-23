@@ -1,7 +1,5 @@
 pragma solidity >=0.4.0 <0.6.0;
 
-// Contract that creates transferrable data. In this case, we create a Dog struct with values of a name and an age
-
 contract DogContract {
     
     struct Dog {
