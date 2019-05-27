@@ -1,0 +1,69 @@
+pragma solidity ^0.5.4;
+
+contract EventContract {
+    
+  struct Event {
+    address host;
+    string name;
+    uint date;
+    uint price;
+    uint ticketCount;
+    uint ticketRemaining;
+  }
+  
+  mapping(uint => Event) public events;
+  mapping(address => mapping(uint => uint)) public tickets; 
+  // From left to right: address = ticket holder, uint: eventId, uint: amount of tickets
+  
+  uint public nextId = 1;
+  
+  modifier eventExist(uint id) {
+    require(events[id].date != 0, 'This event does not exist!');
+    _;
+  }
+  
+  modifier eventActive(uint id) {
+    require(now < events[id].date, 'Event has already passed!');
+    _;
+  }
+
+  function createEvent(
+    string calldata name,
+    uint date,
+    uint price,
+    uint ticketCount) 
+    external {
+      require(date > now, 'Event must be in the future!');
+      require(ticketCount > 0, 'Can only organize event with at least 1 ticket!');
+      events[nextId] = Event(
+        msg.sender, 
+        name, 
+        date, 
+        price, 
+        ticketCount,
+        ticketCount);
+      nextId++;
+  }
+
+  function buyTicket(uint id, uint quantity) 
+    eventExist(id) 
+    eventActive(id)
+    payable
+    external {
+      Event storage _event = events[id];
+      require(msg.value == (_event.price * quantity), 'Ether sent must be equal to total cost of tickets!'); 
+      require(_event.ticketRemaining >= quantity, 'Not enough tickets left!');
+      _event.ticketRemaining -= quantity;
+      tickets[msg.sender][id] += quantity;
+  }
+
+  function transferTicket(uint eventId, uint quantity, address to) 
+    eventExist(eventId)
+    eventActive(eventId)
+    external {
+      require(tickets[msg.sender][eventId] >= quantity, 'Not enough tickets!');
+      tickets[msg.sender][eventId] -= quantity;
+      tickets[to][eventId] += quantity;
+  }
+
+} 
